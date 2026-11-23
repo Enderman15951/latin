@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Disce Latine: Learn Latin with games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Lora:wght@400;600&display=swap">
+<style>
+:root{--bg:#e9edf0;--card:#fff;--ink:#16212e;--mut:#5d6b7c;--acc:#24508f;--gold:#b8891f;--ok:#2f7d4f;--bad:#b3322a;--line:#cdd6df;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a2b;--card:#182740;--ink:#e9edf3;--mut:#9fb0c6;--acc:#6ea0e8;--gold:#e0b84d;--ok:#4fb178;--bad:#ef6f66;--line:#2c3f5e}}
+:root[data-theme="dark"]{--bg:#0f1a2b;--card:#182740;--ink:#e9edf3;--mut:#9fb0c6;--acc:#6ea0e8;--gold:#e0b84d;--ok:#4fb178;--bad:#ef6f66;--line:#2c3f5e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Lora,Georgia,serif}
+#app{max-width:620px;margin:0 auto;padding:0 16px 40px}
+.mosaic{height:12px;margin:0 -16px;background:repeating-conic-gradient(var(--acc) 0 25%,var(--gold) 0 50%) 0 0/12px 12px}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 0 4px}
+h1,h2,h3{font-family:Cinzel,Georgia,serif;margin:.15em 0;line-height:1.2}
+h1{font-size:1.7rem;font-weight:800;color:var(--acc);letter-spacing:.03em}
+.mut,small{color:var(--mut)}
+.rank{font-size:.95rem}
+.st{font-weight:600;background:var(--card);border:2px solid var(--gold);border-radius:99px;padding:4px 14px}
+.bar{height:10px;background:var(--line);border-radius:3px;margin:8px 0 14px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);transition:width .5s}
+.sub{color:var(--mut);margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 12px}
+button{font:inherit;color:var(--ink);cursor:pointer}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:99px;padding:6px 13px;font-size:.92rem}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.game{display:flex;flex-direction:column;text-align:left;background:var(--card);border:2px solid var(--line);border-bottom:5px solid var(--gold);border-radius:4px;padding:14px}
+.game:hover{border-color:var(--acc)}
+.game span{font-size:1.9rem;line-height:1.2}
+.game b{font-family:Cinzel,Georgia,serif;font-size:1.1rem;color:var(--acc)}
+.game small{line-height:1.3}
+.box{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:18px;text-align:center;margin:12px 0}
+.dict h3{color:var(--acc);font-size:1.2rem}
+.fc{min-height:190px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;width:100%}
+.fc h2{font-size:2.2rem}
+.opts{display:grid;gap:10px}
+.opt,.tile,.btn{border:2px solid var(--line);background:var(--card);border-radius:8px;padding:12px 14px}
+.opt:hover:not(.gone){border-color:var(--acc)}
+.ok{background:var(--ok)!important;color:#fff!important;border-color:var(--ok)!important}
+.bad{background:var(--bad)!important;color:#fff!important;border-color:var(--bad)!important;animation:sh .3s}
+.sel{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold)}
+.gone{opacity:.45;pointer-events:none}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt>div{display:grid;gap:8px;align-content:start}
+.hud{display:flex;justify-content:space-between;font-weight:600;margin-top:6px}
+.row{display:flex;gap:10px;justify-content:center;margin-top:12px}
+.ans{min-height:68px;display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:10px;align-items:center}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.tile{padding:8px 13px;border-bottom-width:4px}
+.btn{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600;padding:10px 22px}
+.btn.alt{background:var(--card);color:var(--ink);border-color:var(--line)}
+.back{border:0;background:none;color:var(--mut);padding:8px 0}
+.big{font-size:3.6rem;line-height:1.2}
+.note{text-align:left;font-size:.95rem}
+.lex{display:grid;gap:6px}
+.lw{display:grid;grid-template-columns:1fr 1.2fr auto;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px 12px}
+.lw b{font-family:Cinzel,Georgia,serif;color:var(--acc)}
+.lw i{font-style:normal;color:var(--gold);letter-spacing:2px}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.bad{animation:none}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="mosaic"></div>
+<div id="app"></div>
+<script>
+const RAW={
+Basics:"salve:hello,vale:goodbye,gratias:thank you,ita:yes,non:no,et:and,sed:but,ubi:where,quis:who,quid:what,nunc:now,hodie:today,cras:tomorrow,heri:yesterday,hic:here,ibi:there,semper:always,numquam:never,bene:well,male:badly,quando:when,cur:why",
+Family:"pater:father,mater:mother,filius:son,filia:daughter,frater:brother,soror:sister,amicus:friend,puer:boy,puella:girl,vir:man,femina:woman,avus:grandfather,avia:grandmother,uxor:wife,maritus:husband,infans:baby,parentes:parents,liberi:children,familia:family",
+Nature:"aqua:water,terra:earth,ignis:fire,ventus:wind,sol:sun,luna:moon,stella:star,mons:mountain,mare:sea,arbor:tree,flumen:river,caelum:sky,nubes:cloud,pluvia:rain,nix:snow,silva:forest,insula:island,saxum:rock,herba:grass,flos:flower,tempestas:storm,lacus:lake,campus:field",
+Animals:"canis:dog,felis:cat,equus:horse,avis:bird,piscis:fish,lupus:wolf,taurus:bull,porcus:pig,ovis:sheep,vacca:cow,caper:goat,asinus:donkey,leo:lion,ursus:bear,serpens:snake,mus:mouse,aquila:eagle,gallina:hen,cervus:deer",
+Verbs:"amo:I love,video:I see,audio:I hear,ambulo:I walk,curro:I run,habeo:I have,dico:I say,scribo:I write,lego:I read,bibo:I drink,edo:I eat,dormio:I sleep,sum:I am,eo:I go,venio:I come,do:I give,capio:I take,mitto:I send,pono:I put,vivo:I live,laudo:I praise,voco:I call,specto:I watch,porto:I carry,laboro:I work,pugno:I fight,ludo:I play,rideo:I laugh,fleo:I weep,cano:I sing,sedeo:I sit,sto:I stand,nato:I swim,scio:I know,doceo:I teach,disco:I learn",
+Rome:"villa:house,via:road,urbs:city,forum:marketplace,gladius:sword,miles:soldier,rex:king,deus:god,templum:temple,pax:peace,bellum:war,vinum:wine,navis:ship,pons:bridge,legio:legion,imperator:emperor,senatus:senate,populus:people,lex:law,ludus:school,scutum:shield,hasta:spear,castra:camp,victoria:victory",
+Numbers:"unus:one,duo:two,tres:three,quattuor:four,quinque:five,sex:six,septem:seven,octo:eight,novem:nine,decem:ten,centum:hundred,mille:thousand",
+Adjectives:"magnus:big,parvus:small,bonus:good,malus:bad,novus:new,vetus:old,altus:tall,longus:long,brevis:short,pulcher:beautiful,fortis:brave,felix:happy,tristis:sad,multus:many,celer:fast,tardus:slow,dulcis:sweet,validus:strong,clarus:famous,latus:wide",
+Colors:"albus:white,niger:black,ruber:red,viridis:green,caeruleus:blue,flavus:yellow,aureus:golden,purpureus:purple",
+Body:"caput:head,manus:hand,pes:foot,oculus:eye,auris:ear,nasus:nose,os:mouth,cor:heart,corpus:body,dens:tooth,brachium:arm,crus:leg,digitus:finger",
+Food:"panis:bread,caseus:cheese,caro:meat,ovum:egg,pomum:apple,uva:grape,oleum:oil,mel:honey,lac:milk,sal:salt,cibus:food,cena:dinner,prandium:lunch",
+Time:"dies:day,nox:night,hora:hour,annus:year,mensis:month,tempus:time,vesper:evening,mane:morning,aestas:summer,hiems:winter,ver:spring,autumnus:autumn",
+Home:"domus:home,porta:door,fenestra:window,mensa:table,sella:chair,lectus:bed,culina:kitchen,hortus:garden,tectum:roof,murus:wall,lucerna:lamp,liber:book,epistula:letter,charta:paper,pecunia:money",
+People:"magister:teacher,medicus:doctor,nauta:sailor,agricola:farmer,poeta:poet,pictor:painter,coquus:cook,mercator:merchant,faber:craftsman,pastor:shepherd,venator:hunter,scriba:scribe,discipulus:student,regina:queen,dea:goddess",
+"Little words":"ego:I,tu:you,nos:we,vos:you all,in:in,ad:to,ex:out of,cum:with,sine:without,per:through,sub:under,super:above,ante:before,post:after,inter:between,contra:against"};
+const ICON={Discovered:"🔭",Numbers:"🔢",Adjectives:"✨",Colors:"🎨",Body:"🖐️",Food:"🍞",Time:"⏳",Home:"🏠",People:"🧑‍🌾","Little words":"🔗",Basics:"👋",Family:"👪",Nature:"🌿",Animals:"🐺",Verbs:"🏃",Rome:"🏛️"};
+const SEN=[
+["Puella aquam bibit.","The girl drinks water.","Verbs love the end of the sentence. The ending -am marks what is being acted on (aquam = the water)."],
+["Lupus puerum videt.","The wolf sees the boy.","The ending -um marks the boy as the one being seen. Endings, not word order, carry the meaning."],
+["Pater filium amat.","The father loves his son.","The ending -t means he, she or it: amo (I love) becomes amat (he loves)."],
+["Miles gladium habet.","The soldier has a sword.","Habet = he has. Swap the ending to -ent for “they have”."],
+["Canis et felis dormiunt.","The dog and the cat sleep.","The ending -nt means they: dormit (he sleeps) becomes dormiunt (they sleep)."],
+["Rex urbem videt.","The king sees the city.","Urbs changes to urbem when it is the object, just like puer became puerum."],
+["Mater filiam audit.","The mother hears her daughter.","Feminine words usually take -am as the object ending: filia becomes filiam."],
+["Amici vinum bibunt.","The friends drink wine.","Amici is plural (more than one friend), so the verb takes -nt: bibunt."],
+["Vir librum legit.","The man reads a book.","Liber means book. Legit = he reads, and it comes last, as usual."],
+["Salve, amice! Quid agis?","Hello, friend! How are you?","Amice ends in -e because you are speaking directly to him. This is called the vocative."]];
+const DICTA=[["Carpe diem.","Seize the day."],["Veni, vidi, vici.","I came, I saw, I conquered."],["Fortuna audaces iuvat.","Fortune favors the bold."],["Amor vincit omnia.","Love conquers all."],["Per aspera ad astra.","Through hardships to the stars."],["Cogito, ergo sum.","I think, therefore I am."]];
+const W=[];for(const c in RAW)RAW[c].split(",").forEach(p=>{const[l,e]=p.split(":");W.push({l,e,c})});
+const RANKS=[["Tiro",0],["Discipulus",100],["Miles",300],["Centurio",700],["Senator",1500],["Caesar",3000]];
+const $=s=>document.querySelector(s),app=$("#app");
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+let S={xp:0,streak:0,last:"",m:{}},cat="All",earn=0,AG="home()",Q=null,D=[],i=0,M,B;
+try{Object.assign(S,JSON.parse(localStorage.getItem("disce-latine")||"{}"))}catch(e){}
+S.x=S.x||[];S.x.forEach(w=>W.push(w));
+const save=()=>{try{localStorage.setItem("disce-latine",JSON.stringify(S))}catch(e){}};
+const day=n=>new Date(Date.now()-n*864e5).toDateString();
+const live=()=>S.last===day(0)||S.last===day(1)?S.streak:0;
+function rank(){let k=0;RANKS.forEach((r,j)=>{if(S.xp>=r[1])k=j});return k}
+function gain(n){S.xp+=n;earn+=n;if(S.last!==day(0)){S.streak=S.last===day(1)?S.streak+1:1;S.last=day(0)}save()}
+const pool=()=>cat==="All"?W:W.filter(w=>w.c===cat);
+const learned=()=>W.filter(w=>(S.m[w.l]||0)>=3).length;
+function mark(w,ok){S.m[w.l]=Math.max(0,Math.min(5,(S.m[w.l]||0)+(ok?1:-1)));save()}
+const pick=n=>shuf(pool()).sort((a,b)=>(S.m[a.l]||0)-(S.m[b.l]||0)).slice(0,n);
+function stop(){if(Q){Q.done=1;clearInterval(Q.iv)}}
+function head(){const r=rank(),nx=RANKS[r+1],p=nx?(S.xp-RANKS[r][1])/(nx[1]-RANKS[r][1])*100:100;
+return `<header><div><h1>Disce Latine</h1><div class="rank mut">${RANKS[r][0]}, ${S.xp} XP</div></div><div class="st" title="Day streak">🔥 ${live()}</div></header><div class="bar"><i style="width:${p}%"></i></div>`}
+const back=()=>`<button class="back" onclick="home()">Back to menu</button>`;
+const G=(ic,t,d,f)=>`<button class="game" onclick="${f}"><span>${ic}</span><b>${t}</b><small>${d}</small></button>`;
+function setCat(c){cat=c;home()}
+function home(){stop();const d=DICTA[new Date().getDate()%DICTA.length];
+app.innerHTML=head()+`<p class="sub">Words learned: <b>${learned()}</b> of ${W.length}. Pick a topic, then a game.</p>
+<div class="chips">${["All",...Object.keys(RAW),...(S.x.length?["Discovered"]:[])].map(c=>`<button class="chip ${c===cat?'on':''}" onclick="setCat('${c}')">${ICON[c]||'📜'} ${c}</button>`).join("")}</div>
+<div class="grid">${G("🃏","Tabulae","Flip flashcards","cards()")}${G("⚔️","Certamen","Quiz with 3 lives","quiz('lives')")}${G("⏱️","Velocitas","45-second speed round","quiz('time')")}${G("🧩","Memoria","Match the pairs","match()")}${G("🏗️","Aedifica","Build Latin sentences","build()")}${G("📖","Lexicon","Browse every word","lex()")}${G("🔭","Explorator","Discover new words online","explore()")}</div>
+<div class="box dict"><small>Saying of the day</small><h3>${d[0]}</h3><div class="mut">${d[1]}</div></div>`}
+/* Flashcards */
+function cards(){stop();earn=0;AG="cards()";D=pick(Math.min(10,pool().length));i=0;card(false)}
+function card(f){if(i>=D.length)return done("Tabulae",D.length,D.length);const w=D[i];
+app.innerHTML=head()+back()+`<div class="hud"><span>Card ${i+1} of ${D.length}</span><small>${w.c}</small></div><button class="box fc" onclick="card(${!f})">${f?`<h2>${w.e}</h2><div class="mut">${w.l}</div>`:`<h2>${w.l}</h2><div class="mut">Tap to reveal the meaning</div>`}</button>${f?`<div class="row"><button class="btn alt" onclick="grade(0)">Again</button><button class="btn" onclick="grade(1)">Got it</button></div>`:''}`}
+function grade(ok){const w=D[i];mark(w,ok);if(ok)gain(5);else D.push(w);i++;card(false)}
+/* Quiz + speed round */
+function quiz(mode){stop();earn=0;AG=`quiz('${mode}')`;Q={mode,lives:3,n:0,ok:0,combo:0,t:45};
+if(mode==="time")Q.iv=setInterval(()=>{Q.t--;const e=$("#tm");if(e)e.textContent=Q.t;if(Q.t<=0)finish()},1000);ask()}
+function ask(){if(Q.done)return;const w=rnd(pick(3)),dir=Math.random()<.5,opts=shuf([w,...[...shuf(W.filter(x=>x.c===w.c&&x.l!==w.l)),...shuf(W.filter(x=>x.l!==w.l))].filter((x,k,a)=>x.e!==w.e&&a.findIndex(y=>y.l===x.l||y.e===x.e)===k).slice(0,3)]);
+Q.w=w;Q.lock=0;
+app.innerHTML=head()+back()+`<div class="hud"><span>${Q.mode==="time"?`⏱️ <b id="tm">${Q.t}</b> s`:"❤️".repeat(Q.lives)+" &nbsp;Question "+(Q.n+1)+" of 10"}</span><span>Combo ${Q.combo}</span></div><div class="box"><small>${dir?"Latin to English":"English to Latin"}</small><h2>${dir?w.l:w.e}</h2></div><div class="opts">${opts.map(o=>`<button class="opt" data-l="${o.l}" onclick="ans(this,'${o.l}')">${dir?o.e:o.l}</button>`).join("")}</div>`}
+function ans(b,l){if(Q.lock||Q.done)return;Q.lock=1;const ok=l===Q.w.l;mark(Q.w,ok);Q.n++;
+if(ok){Q.ok++;Q.combo++;gain(10+Math.min(Q.combo,5)*2);b.classList.add("ok")}
+else{Q.combo=0;Q.lives--;b.classList.add("bad");const c=document.querySelector(`[data-l="${Q.w.l}"]`);if(c)c.classList.add("ok")}
+setTimeout(()=>{if(Q.done)return;if(Q.mode==="lives"&&(Q.lives<=0||Q.n>=10))finish();else ask()},ok?450:1100)}
+function finish(){const q=Q;stop();done(q.mode==="time"?"Velocitas":"Certamen",q.ok,q.n)}
+/* Matching */
+function match(){stop();earn=0;AG="match()";const ws=pick(6);M={n:ws.length,left:shuf(ws),right:shuf(ws),sel:null,got:{},miss:0};mdraw()}
+const mb=(w,s)=>`<button class="opt ${M.got[w.l]?"ok gone":""} ${M.sel&&M.sel.s===s&&M.sel.l===w.l?"sel":""}" onclick="mpick('${w.l}','${s}')">${s==="l"?w.l:w.e}</button>`;
+function mdraw(){app.innerHTML=head()+back()+`<p class="sub">Tap a Latin word, then its English meaning. Misses: ${M.miss}</p><div class="mt"><div>${M.left.map(w=>mb(w,"l")).join("")}</div><div>${M.right.map(w=>mb(w,"e")).join("")}</div></div>`}
+function mpick(l,s){if(M.got[l])return;
+if(!M.sel||M.sel.s===s){M.sel={l,s};return mdraw()}
+const w=W.find(x=>x.l===M.sel.l);
+if(M.sel.l===l){M.got[l]=1;mark(w,1);gain(8);M.sel=null;mdraw();if(Object.keys(M.got).length===M.n)setTimeout(()=>done("Memoria",M.n,M.n+M.miss),600)}
+else{M.miss++;mark(w,0);M.sel=null;mdraw()}}
+/* Sentence builder */
+function build(){stop();earn=0;AG="build()";B={qs:shuf(SEN).slice(0,5),i:0,ok:0};bnext()}
+function bnext(){const s=B.qs[B.i];B.s=s;B.n=s[0].split(" ").length;B.bank=shuf(s[0].split(" ").map((t,j)=>({t,j})));B.ans=[];B.res=0;B.try=0;bdraw()}
+function bdraw(){const s=B.s,ok=B.res===1;
+app.innerHTML=head()+back()+`<p class="sub">Sentence ${B.i+1} of ${B.qs.length}. Put the Latin words in order.</p><div class="box"><h3>${s[1]}</h3></div><div class="ans ${B.res===2?"bad":""} ${ok?"ok":""}">${B.ans.map((x,k)=>`<button class="tile" onclick="brm(${k})">${x.t}</button>`).join("")||'<span class="mut">Tap the words below</span>'}</div><div class="bank">${B.bank.filter(x=>!B.ans.includes(x)).map(x=>`<button class="tile" onclick="badd(${x.j})">${x.t}</button>`).join("")}</div>${ok?`<div class="box note"><b>Why it works:</b> ${s[2]}</div><div class="row"><button class="btn" onclick="bnxt()">${B.i+1<B.qs.length?"Next sentence":"Finish"}</button></div>`:""}`}
+function badd(j){if(B.res)return;B.ans.push(B.bank.find(x=>x.j===j));
+if(B.ans.length===B.n){if(B.ans.map(x=>x.t).join(" ")===B.s[0]){B.res=1;if(!B.try)B.ok++;gain(B.try?5:15)}
+else{B.res=2;B.try=1;bdraw();return setTimeout(()=>{if(B.res===2){B.ans=[];B.res=0;bdraw()}},900)}}
+bdraw()}
+function brm(k){if(B.res)return;B.ans.splice(k,1);bdraw()}
+function bnxt(){B.i++;B.i>=B.qs.length?done("Aedifica",B.ok,B.qs.length):bnext()}
+/* Lexicon */
+function lex(){stop();const ws=pool();
+app.innerHTML=head()+back()+`<p class="sub">${ws.length} words in ${cat}. Dots show how well you know each one.</p><div class="lex">${ws.map(w=>{const m=Math.min(S.m[w.l]||0,3);return `<div class="lw"><b>${w.l}</b><span>${w.e}</span><i>${"●".repeat(m)}${"○".repeat(3-m)}</i></div>`}).join("")}</div>`}
+/* Explorator: pulls new words from the Wiktionary API */
+const API="https://en.wiktionary.org/w/api.php",LET="abcdefghilmnopqrstuv".split("");
+const wk=async p=>{const r=await fetch(API+"?"+new URLSearchParams({format:"json",formatversion:"2",origin:"*",...p}));if(!r.ok)throw new Error("HTTP "+r.status);return r.json()};
+const POS=/^(Noun|Verb|Adjective|Adverb|Preposition|Conjunction|Pronoun|Numeral|Interjection|Determiner|Participle)$/;
+const SKIP=/^(alternative|inflection|obsolete|misspelling|dated|archaic|variant|abbreviation|initialism|contraction|clipping|ellipsis|synonym|(first|second|third)-person)|\b(form|spelling|participle|supine|gerund|comparative|superlative|genitive|dative|accusative|ablative|vocative|nominative)\b.* of\b/i;
+const RARE=/\{\{(?:lb|label|lbl)\|la\|[^}]*\b(rare|archaic|obsolete|dated|late|medieval|neologism|uncommon|nonstandard|taxonomy|zoology|botany|chemistry|medicine|anatomy|technical)\b/i;
+function gloss(t){const m=t.match(/(?:^|\n)==\s*Latin\s*==\s*\n([\s\S]*?)(?=\n==[^=]|$)/);if(!m)return null;let ok=0;
+for(const ln of m[1].split("\n")){const h=ln.match(/^={3,}\s*([^=]+?)\s*={3,}\s*$/);if(h){ok=POS.test(h[1]);continue}
+if(ok&&/^# /.test(ln)){if(RARE.test(ln))return null;
+let s=ln.slice(2).replace(/<ref[\s\S]*?<\/ref>|<ref[^>]*\/>|<!--[\s\S]*?-->/g,"").replace(/\{\{(?:l|m|ll|link|mention)\|[a-z-]+\|([^|}]+)[^}]*\}\}/g,"$1"),p;
+do{p=s;s=s.replace(/\{\{[^{}]*\}\}/g,"")}while(s!==p);
+s=s.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g,"$1").replace(/'{2,}|<[^>]*>|[<>"&]/g,"").replace(/\s+/g," ").trim().split(";")[0].replace(/[.,:\s]+$/,"");
+if(s.length>48)s=s.slice(0,48).replace(/[, ][^, ]*$/,"");
+return s.length<2||SKIP.test(s)?null:s}}return null}
+function explore(){stop();
+app.innerHTML=head()+back()+`<div class="box"><h3>Explorator</h3><p class="mut">Pull fresh Latin words from the Wiktionary dictionary, which has tens of thousands of entries. New words join your collection and work in every game. Found so far: <b>${S.x.length}</b>.</p><div class="row"><button class="btn" onclick="fetchWords()">Find 15 random words</button></div></div><p class="sub">Or start from a letter:</p><div class="chips">${LET.map(c=>`<button class="chip" onclick="fetchWords('${c}')">${c.toUpperCase()}</button>`).join("")}</div>`}
+async function fetchWords(l){stop();earn=0;const pre=(l||rnd(LET))+rnd("aeioustpclmnrd".split(""));
+app.innerHTML=head()+back()+`<div class="box"><div class="big">🔭</div><p class="mut">Searching the dictionary near “${pre}”...</p></div>`;
+try{const c=await wk({action:"query",list:"categorymembers",cmtitle:"Category:Latin_lemmas",cmnamespace:"0",cmlimit:"500",cmstartsortkeyprefix:pre});
+const have=new Set(W.map(w=>w.l)),ts=shuf(c.query.categorymembers.map(x=>x.title).filter(t=>/^[a-z]{2,14}$/.test(t)&&!have.has(t))).slice(0,40);
+if(!ts.length)throw new Error("No new words found near "+pre);
+const r=await wk({action:"query",prop:"revisions",rvprop:"content",rvslots:"main",titles:ts.join("|")}),got=[];
+(r.query.pages||[]).forEach(p=>{const t=p.revisions&&p.revisions[0].slots.main.content,e=t&&gloss(t);if(e&&got.length<15)got.push({l:p.title,e,c:"Discovered"})});
+if(!got.length)throw new Error("No usable definitions came back, so try again");
+got.forEach(w=>{W.push(w);S.x.push(w)});gain(got.length*2);
+app.innerHTML=head()+back()+`<h3>${got.length} new words!</h3><div class="lex">${got.map(w=>`<div class="lw"><b>${w.l}</b><span>${w.e}</span><i></i></div>`).join("")}</div><div class="row"><button class="btn" onclick="fetchWords()">Find more</button><button class="btn alt" onclick="setCat('Discovered')">Practice them</button></div>`}
+catch(e){app.innerHTML=head()+back()+`<div class="box"><div class="big">📡</div><h3>Couldn’t load words</h3><p class="mut">${e.message}. This needs an internet connection, and it can’t connect from inside Claude’s preview. Try it on your GitHub Pages site.</p><div class="row"><button class="btn" onclick="fetchWords()">Try again</button></div></div>`}}
+/* Results */
+function done(t,ok,n){stop();const p=n?ok/n:0;
+app.innerHTML=head()+`<div class="box"><div class="big">${p>.8?"🏆":p>.5?"🏛️":"📜"}</div><h2>${p>.8?"Euge!":p>.5?"Bene!":"Perge!"}</h2><p class="mut">${p>.8?"Well done!":p>.5?"Good work!":"Keep going, you’ll get it!"}</p><p>${t}: ${ok} of ${n} right, <b>+${earn} XP</b></p><div class="row"><button class="btn" onclick="${AG}">Play again</button><button class="btn alt" onclick="home()">Menu</button></div></div>`}
+home();
+</script>
+</body>
+</html>
